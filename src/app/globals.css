@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f6f3ee;
+  --foreground: #1d1a16;
+  --surface: #ffffff;
+  --surface-2: #f0ece6;
+  --accent: #e4572e;
+  --accent-2: #3a86ff;
+  --muted: rgba(29, 26, 22, 0.06);
+  --border-color: rgba(29, 26, 22, 0.12);
+  --grid-color: rgba(29, 26, 22, 0.05);
+  --accent-glow: rgba(228, 87, 46, 0.16);
+  --accent-2-glow: rgba(58, 134, 255, 0.14);
+  --shadow-color: rgba(29, 26, 22, 0.18);
+}
+
+.dark {
+  --background: #0c1116;
+  --foreground: #e8e3d8;
+  --surface: #111820;
+  --surface-2: #151d27;
+  --accent: #f59f0b;
+  --accent-2: #7dd3fc;
+  --muted: rgba(232, 227, 216, 0.08);
+  --border-color: rgba(232, 227, 216, 0.14);
+  --grid-color: rgba(232, 227, 216, 0.06);
+  --accent-glow: rgba(245, 159, 11, 0.14);
+  --accent-2-glow: rgba(125, 211, 252, 0.12);
+  --shadow-color: rgba(5, 10, 15, 0.6);
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-muted: var(--muted);
+  --color-border-color: var(--border-color);
+  --color-grid-color: var(--grid-color);
+
+  --animate-fade-up: fade-up 0.6s ease-out;
+  --animate-fade-in: fade-in 0.5s ease-out;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@utility surface-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 18px 40px var(--shadow-color);
+}
+
+body {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  background-image:
+    radial-gradient(circle at 10% 0%, var(--accent-glow), transparent 45%),
+    radial-gradient(circle at 85% 5%, var(--accent-2-glow), transparent 50%),
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+  background-attachment: fixed;
+}
+
+.font-display {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
