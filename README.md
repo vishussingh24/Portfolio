@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Vishal Singh — Portfolio
 
-## Getting Started
+A modern, responsive developer portfolio built with **Next.js**, **TypeScript**, and **Tailwind CSS**. Showcasing my projects, skills, and experience as a Full Stack Developer & CS Student.
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- 🌗 **Dark / Light Mode** — seamless theme switching with `next-themes`
+- 🎨 **Smooth Animations** — powered by Framer Motion
+- 📱 **Fully Responsive** — looks great on every screen size
+- ⚡ **Fast & Optimized** — built on Next.js with optimized fonts and images
+
+## 🛠️ Tech Stack
+
+| Category | Technologies |
+|----------|-------------|
+| **Framework** | Next.js 16, React 19, TypeScript |
+| **Styling** | Tailwind CSS 4, Tailwind Animate |
+| **Animations** | Framer Motion |
+| **Icons** | Lucide React |
+| **Fonts** | Space Grotesk, Fraunces (Google Fonts) |
+
+## 📂 Project Structure
+
+```
+src/
+├── app/          # Next.js app router pages & layout
+└── components/   # Reusable UI components
+    ├── Navbar
+    ├── Hero
+    ├── About
+    ├── Skills
+    ├── Projects
+    ├── Contact
+    └── Footer
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Clone the repository**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   git clone https://github.com/vishussingh24/Portfolio.git
+   cd Portfolio
+   ```
 
-## Learn More
+2. **Install dependencies**
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Run the development server**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   npm run dev
+   ```
 
-## Deploy on Vercel
+4. **Open in your browser**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   Visit [http://localhost:3000](http://localhost:3000) to see the portfolio 🎉
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📜 Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start the development server |
+| `npm run build` | Create a production build |
+| `npm run start` | Serve the production build |
+| `npm run lint` | Run ESLint checks |
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! Feel free to open an issue or submit a pull request.
+
+## 📬 Contact
+
+- 📧 **Email** — [vk24122005@gmail.com](mailto:vk24122005@gmail.com)
+- 💼 **LinkedIn** — [vishal-singh-426739304](https://www.linkedin.com/in/vishal-singh-426739304)
+- 🐙 **GitHub** — [vishussingh24](https://github.com/vishussingh24)
+
+---
+
+⭐ *If you found this helpful, give it a star!*
