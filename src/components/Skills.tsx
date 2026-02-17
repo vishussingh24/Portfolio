@@ -1,4 +1,23 @@
+const ICON_BASE_URL = "https://cdn.simpleicons.org";
+const SKILL_ICON_SLUGS: Partial<Record<string, string>> = {
+  JavaScript: "javascript",
+  "C++": "cplusplus",
+  HTML5: "html5",
+  CSS3: "css",
+  "React.js": "react",
+  "Next.js": "nextdotjs",
+  "Node.js": "nodedotjs",
+  "Express.js": "express",
+  "Tailwind CSS": "tailwindcss",
+  MongoDB: "mongodb",
+  MySQL: "mysql",
+  "Git/GitHub": "github",
+  Postman: "postman",
+  "VS Code": "visualstudiocode",
+};
+
 export default function Skills() {
+
   const skills = {
     Languages: ["JavaScript", "C++", "SQL", "HTML5", "CSS3"],
     "Frameworks & Libraries": [
@@ -28,20 +47,34 @@ export default function Skills() {
           {Object.entries(skills).map(([category, items]) => (
             <div
               key={category}
-              className="surface-card rounded-2xl bg-surface/90 p-6"
+              className="surface-card rounded-2xl p-6"
             >
               <h3 className="mb-4 text-xs uppercase tracking-[0.2em] text-foreground/60">
                 {category}
               </h3>
               <div className="flex flex-wrap gap-2">
-                {items.map((skill) => (
-                  <span
-                    key={skill}
-                    className="rounded-full border border-border-color bg-surface-2 px-3 py-1 text-sm text-foreground/70"
-                  >
-                    {skill}
-                  </span>
-                ))}
+                {items.map((skill) => {
+                  const slug = SKILL_ICON_SLUGS[skill];
+
+                  return (
+                    <span
+                      key={skill}
+                      className="inline-flex items-center gap-2 rounded-full border border-border-color bg-surface-2 px-3 py-1 text-sm text-foreground/70"
+                    >
+                      {slug ? (
+                        <img
+                          src={`${ICON_BASE_URL}/${slug}/000000?viewbox=auto`}
+                          alt=""
+                          aria-hidden="true"
+                          loading="lazy"
+                          decoding="async"
+                          className="h-4 w-4 opacity-80 dark:invert"
+                        />
+                      ) : null}
+                      {skill}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           ))}

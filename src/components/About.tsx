@@ -16,7 +16,9 @@ export default function About() {
           </p>
           <p className="text-lg text-foreground/70">
             I work mostly with the MERN stack and care about thoughtful UI,
-            predictable APIs, and code that stays easy to change.
+            predictable APIs, and code that stays easy to change. I am also a 3D
+            developer who builds assets in Blender and interactive scenes with
+            Three.js.
           </p>
           <div className="flex flex-wrap gap-3 text-sm text-foreground/60">
             <span className="rounded-full border border-border-color px-3 py-1">
