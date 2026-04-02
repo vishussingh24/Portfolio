@@ -1,4 +1,4 @@
-My — Portfolio
+# My - Portfolio
 
 A modern, responsive developer portfolio built with **Next.js**, **TypeScript**, and **Tailwind CSS**. Showcasing my projects, skills, and experience as a Full Stack Developer & CS Student.
 
