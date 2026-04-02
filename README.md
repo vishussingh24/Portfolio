@@ -57,7 +57,7 @@ src/
 
 4. **Open in your browser**
 
-   Visit [http://localhost:3000](http://localhost:3000) to see the portfolio 🎉
+   Visit [http://localhost:3000](vishussingh.me) to see the portfolio 🎉
 
 ## 📜 Available Scripts
 
