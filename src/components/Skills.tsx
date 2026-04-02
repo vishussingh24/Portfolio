@@ -19,7 +19,7 @@ const SKILL_ICON_SLUGS: Partial<Record<string, string>> = {
 export default function Skills() {
 
   const skills = {
-    Languages: ["JavaScript", "C++", "SQL", "HTML5", "CSS3"],
+    Languages: ["JavaScript", "C++", "SQL", "HTML", "CSS3"],
     "Frameworks & Libraries": [
       "React.js",
       "Next.js",
