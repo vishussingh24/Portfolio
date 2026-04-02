@@ -116,7 +116,7 @@ export default function Navbar() {
               <Github size={17} />
             </Link>
             <Link
-              href="https://www.linkedin.com/in/vishal-singh-426739304/"
+              href="https://www.linkedin.com/in/vishussingh24/"
               target="_blank"
               rel="noreferrer"
               className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-color/70 bg-white/52 text-foreground/65 transition hover:-translate-y-0.5 hover:text-foreground dark:bg-surface/75"
@@ -188,7 +188,7 @@ export default function Navbar() {
                   GitHub
                 </Link>
                 <Link
-                  href="https://www.linkedin.com/in/vishal-singh-426739304/"
+                  href="https://www.linkedin.com/in/vishussingh24/"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-border-color px-4 py-3 text-sm font-medium text-foreground/75 transition hover:text-foreground"

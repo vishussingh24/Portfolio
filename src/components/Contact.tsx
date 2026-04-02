@@ -27,7 +27,7 @@ export default function Contact() {
               Email Me
             </a>
             <Link
-              href="https://www.linkedin.com/in/vishal-singh-426739304/"
+              href="https://www.linkedin.com/in/vishussingh24/"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-border-color px-6 py-3 text-sm font-semibold text-foreground transition hover:border-foreground/30 hover:bg-surface/80"
@@ -70,13 +70,13 @@ export default function Contact() {
             <div>
               <p className="text-foreground/60">LinkedIn</p>
               <a
-                href="https://www.linkedin.com/in/vishal-singh-426739304/"
+                href="https://www.linkedin.com/in/vishussingh24/"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 font-semibold text-foreground transition hover:text-accent"
               >
                 <Linkedin size={16} />
-                linkedin.com/in/vishal-singh-426739304
+                linkedin.com/in/vishussingh24
               </a>
             </div>
             <div>

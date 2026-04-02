@@ -102,7 +102,7 @@ export default function Hero() {
                   GitHub
                 </a>
                 <a
-                  href="https://www.linkedin.com/in/vishal-singh-426739304/"
+                  href="https://www.linkedin.com/in/vishussingh24/"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 text-foreground/70 transition hover:text-foreground"

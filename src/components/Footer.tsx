@@ -18,7 +18,7 @@ export default function Footer() {
             <Github size={18} />
           </Link>
           <Link
-            href="https://www.linkedin.com/in/vishal-singh-426739304/"
+            href="https://www.linkedin.com/in/vishussingh24/"
             target="_blank"
             rel="noreferrer"
             className="transition-colors hover:text-foreground"
