@@ -1,79 +1,211 @@
-import { GraduationCap } from "lucide-react";
+"use client";
+
+import { useEffect, useRef } from "react";
+import { GraduationCap, Briefcase } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function About() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const paragraphRef = useRef<HTMLParagraphElement>(null);
+  const timelineLineRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Word-by-word reveal for the main paragraph
+      const words = paragraphRef.current?.querySelectorAll(".about-word");
+      if (words) {
+        gsap.fromTo(
+          words,
+          { opacity: 0.08 },
+          {
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.04,
+            ease: "none",
+            scrollTrigger: {
+              trigger: paragraphRef.current,
+              start: "top 80%",
+              end: "bottom 40%",
+              scrub: 1,
+            },
+          }
+        );
+      }
+
+      // Heading slide in
+      gsap.fromTo(
+        ".about-heading",
+        { x: -60, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".about-heading",
+            start: "top 85%",
+            end: "top 60%",
+            scrub: 1,
+          },
+        }
+      );
+
+      // Skill chips stagger
+      gsap.fromTo(
+        ".about-chip",
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.08,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".about-chips",
+            start: "top 85%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+
+      // Timeline Line Drawing
+      if (timelineLineRef.current) {
+        gsap.fromTo(
+          timelineLineRef.current,
+          { height: 0 },
+          {
+            height: "100%",
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".timeline-container",
+              start: "top 70%",
+              end: "bottom 80%",
+              scrub: 1,
+            },
+          }
+        );
+      }
+
+      // Timeline Cards Reveal
+      gsap.utils.toArray(".timeline-item").forEach((item: any, i) => {
+        gsap.fromTo(
+          item,
+          { opacity: 0, x: -40 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.8,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: item,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const aboutText =
+    "I'm a Computer Science student and full-stack developer focused on building modern web applications with clean interfaces, predictable APIs, and maintainable code. I mainly work with the MERN stack and also enjoy building interactive 3D experiences with Three.js.";
+
+  const aboutWords = aboutText.split(" ");
+
   return (
-    <section id="about" className="scroll-mt-24 py-20">
-      <div className="mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-[1.08fr_0.92fr]">
-        <div className="relative space-y-6">
-          <div className="pointer-events-none absolute -left-8 top-6 hidden h-28 w-28 rounded-full bg-accent/10 blur-3xl lg:block" />
+    <section id="about" ref={sectionRef} className="relative scroll-mt-24 py-28 lg:py-36 overflow-hidden">
+      {/* Background accent */}
+      <div className="pointer-events-none absolute right-0 top-[20%] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle,rgba(0,229,255,0.05),transparent_70%)] blur-3xl" />
 
-          
+      <div className="mx-auto max-w-7xl px-6">
+        {/* Section label */}
+        <p className="about-heading mb-4 text-xs font-medium uppercase tracking-[0.3em] text-accent">
+          About
+        </p>
 
-          <h2 className="relative font-display text-2xl text-foreground md:text-3xl">
-            About Me
-          </h2>
-
-          <p className="relative max-w-2xl text-lg leading-8 text-foreground/70">
-            I&apos;m a Computer Science student and full-stack developer focused
-            on modern web apps with clean UI, predictable APIs, and maintainable
-            code.
-          </p>
-
-          <p className="relative max-w-2xl text-lg leading-8 text-foreground/70">
-            I mainly work with the MERN stack, and I also enjoy building 3D and
-            interactive experiences with Blender and Three.js.
-          </p>
-
-          
-
-          <div className="flex flex-wrap gap-3 text-sm text-foreground/65">
-            <span className="rounded-full border border-border-color bg-surface/70 px-4 py-2 shadow-sm">
-              Full Stack Development
+        {/* Word-by-word paragraph */}
+        <p
+          ref={paragraphRef}
+          className="max-w-4xl font-display text-3xl leading-snug text-foreground md:text-4xl lg:text-5xl"
+        >
+          {aboutWords.map((word, i) => (
+            <span key={i} className="about-word inline-block mr-[0.28em]">
+              {word}
             </span>
-            <span className="rounded-full border border-border-color bg-surface/70 px-4 py-2 shadow-sm">
-              System Thinking
-            </span>
-            <span className="rounded-full border border-border-color bg-surface/70 px-4 py-2 shadow-sm">
-              Clean UI
-            </span>
-          </div>
+          ))}
+        </p>
+
+        {/* Chips */}
+        <div className="about-chips mt-10 flex flex-wrap gap-3">
+          {["Full Stack Development", "System Thinking", "Clean UI", "3D / Three.js"].map(
+            (chip) => (
+              <span
+                key={chip}
+                className="about-chip rounded-full border border-foreground/10 px-5 py-2.5 text-sm text-foreground/50 transition-colors hover:border-accent/50 hover:text-foreground"
+              >
+                {chip}
+              </span>
+            )
+          )}
         </div>
 
-        <div className="relative overflow-hidden rounded-[32px] border border-white/40 bg-white/55 p-8 shadow-[0_24px_60px_var(--shadow-color)] backdrop-blur-2xl dark:border-white/10 dark:bg-white/6">
-          <div className="absolute -right-8 top-4 h-28 w-28 rounded-full bg-accent-2/10 blur-3xl" />
-          <div className="absolute inset-[1px] rounded-[30px] bg-[linear-gradient(145deg,rgba(255,255,255,0.62),rgba(255,255,255,0.20),rgba(255,255,255,0.08))] dark:bg-[linear-gradient(145deg,rgba(255,255,255,0.10),rgba(255,255,255,0.04),rgba(255,255,255,0.02))]" />
+        {/* Interactive Timeline */}
+        <div className="timeline-container mt-24 relative max-w-4xl mx-auto">
+          <h3 className="mb-12 flex items-center justify-center gap-3 text-2xl font-semibold text-foreground font-display">
+            <Briefcase className="text-accent" size={28} />
+            Experience & Education
+          </h3>
+          
+          <div className="relative pl-8 md:pl-0">
+            {/* The animated line */}
+            <div className="absolute left-[15px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-px bg-foreground/10">
+              <div ref={timelineLineRef} className="w-full bg-gradient-to-b from-accent to-accent-2 origin-top" />
+            </div>
 
-          <div className="relative">
-            <h3 className="mb-6 flex items-center gap-2 text-lg font-semibold text-foreground">
-              <GraduationCap className="text-accent" size={20} />
-              Education
-            </h3>
-
-            <div className="space-y-6 border-l border-border-color pl-6 text-sm">
-              <div className="relative">
-                <span className="absolute -left-[29px] top-1 h-3 w-3 rounded-full bg-accent"></span>
-                <p className="text-base font-semibold text-foreground">
-                  B.Tech in Computer Science
-                </p>
-                <p className="text-foreground/60">
-                  Galgotias University | 2023 - Present
-                </p>
-                <p className="text-foreground/70">
-                  Focused on full-stack development and data structures.
-                </p>
+            <div className="space-y-12">
+              {/* Timeline Item 1 */}
+              <div className="timeline-item relative flex flex-col md:flex-row items-start md:items-center justify-between w-full">
+                <div className="hidden md:block w-5/12 text-right pr-8">
+                  <span className="text-sm font-medium text-accent">2023 - Present</span>
+                </div>
+                <div className="absolute left-[-29px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full bg-background border-2 border-accent z-10 shadow-[0_0_15px_rgba(0,229,255,0.5)]" />
+                <div className="w-full md:w-5/12 md:pl-8">
+                  <div className="surface-card p-6 rounded-2xl transition-transform hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+                    <h4 className="text-lg font-bold text-foreground">B.Tech in Computer Science</h4>
+                    <span className="md:hidden block text-sm font-medium text-accent mt-1 mb-2">2023 - Present</span>
+                    <p className="text-sm text-foreground/50 mt-1 flex items-center gap-2">
+                      <GraduationCap size={16} /> Galgotias University
+                    </p>
+                    <p className="mt-3 text-sm text-foreground/70">
+                      Focused on full-stack development, advanced data structures, and algorithm design.
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div className="relative">
-                <span className="absolute -left-[29px] top-1 h-3 w-3 rounded-full bg-accent-2"></span>
-                <p className="text-base font-semibold text-foreground">
-                  High School
-                </p>
-                <p className="text-foreground/60">
-                  Kendriya Vidyalaya Meerut Cantt.
-                </p>
-                <p className="text-foreground/70">
-                  Science and Mathematics foundation.
-                </p>
+              {/* Timeline Item 2 */}
+              <div className="timeline-item relative flex flex-col md:flex-row-reverse items-start md:items-center justify-between w-full">
+                <div className="hidden md:block w-5/12 text-left pl-8">
+                  <span className="text-sm font-medium text-accent-2">2021 - 2023</span>
+                </div>
+                <div className="absolute left-[-29px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full bg-background border-2 border-accent-2 z-10 shadow-[0_0_15px_rgba(184,41,255,0.5)]" />
+                <div className="w-full md:w-5/12 md:pr-8">
+                  <div className="surface-card p-6 rounded-2xl transition-transform hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.8)] text-left md:text-right">
+                    <h4 className="text-lg font-bold text-foreground">High School</h4>
+                    <span className="md:hidden block text-sm font-medium text-accent-2 mt-1 mb-2">2021 - 2023</span>
+                    <p className="text-sm text-foreground/50 mt-1 flex items-center gap-2 md:justify-end">
+                      <GraduationCap size={16} /> Kendriya Vidyalaya Meerut Cantt.
+                    </p>
+                    <p className="mt-3 text-sm text-foreground/70">
+                      Strong foundation in Science and Mathematics, sparking my interest in programming.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

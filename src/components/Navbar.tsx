@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Github, Linkedin, Menu, Sparkles, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Github, Linkedin, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -16,201 +16,203 @@ const navItems = [
 export default function Navbar() {
   const [activeSection, setActiveSection] = useState("home");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
-    const updateNavbarState = () => {
-      setIsScrolled(window.scrollY > 18);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Handle background styling based on scroll position
+      setIsScrolled(currentScrollY > 18);
 
-      const scrollPosition = window.scrollY + 160;
+      // Scroll direction logic: 
+      if (currentScrollY < 100) {
+        // Keep it visible at the very top
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY.current) {
+        // Scrolling down -> hide
+        setIsVisible(false);
+      } else if (currentScrollY < lastScrollY.current) {
+        // Scrolling up -> show
+        setIsVisible(true);
+      }
+
+      // Track active section
       let currentSection = "home";
-
+      const scrollPosition = currentScrollY + 160;
       for (const item of navItems) {
         const section = document.getElementById(item.id);
         if (section && scrollPosition >= section.offsetTop) {
           currentSection = item.id;
         }
       }
-
       setActiveSection(currentSection);
+
+      lastScrollY.current = currentScrollY;
     };
 
-    updateNavbarState();
-    window.addEventListener("scroll", updateNavbarState, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", updateNavbarState);
-    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    if (!isMenuOpen) {
-      return;
-    }
-
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsMenuOpen(false);
-      }
+    if (!isMenuOpen) return;
+    const closeOnEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsMenuOpen(false);
     };
-
     window.addEventListener("keydown", closeOnEscape);
-
-    return () => {
-      window.removeEventListener("keydown", closeOnEscape);
-    };
+    return () => window.removeEventListener("keydown", closeOnEscape);
   }, [isMenuOpen]);
 
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <nav className="fixed inset-x-0 top-0 z-50 px-4 pt-4">
+    <nav 
+      className={`fixed inset-x-0 top-0 z-[100] flex justify-center px-4 pt-4 transition-transform duration-500 ease-in-out ${
+        isVisible ? "translate-y-0" : "-translate-y-[150%]"
+      }`}
+    >
       <div
-        className={`relative mx-auto max-w-6xl overflow-hidden rounded-[30px] border transition-all duration-300 ${
+        className={`relative flex w-[95%] max-w-5xl items-center justify-between gap-8 rounded-full border transition-all duration-300 px-8 py-3 shadow-lg backdrop-blur-xl ${
           isScrolled
-            ? "border-border-color/70 bg-[#f7f2eb]/88 shadow-[0_22px_55px_var(--shadow-color)] backdrop-blur-2xl dark:bg-surface/94"
-            : "border-border-color/55 bg-[#fbf8f3]/78 shadow-[0_14px_36px_rgba(29,26,22,0.12)] backdrop-blur-2xl dark:bg-surface/88"
+            ? "border-border-color/70 bg-surface/90 dark:bg-surface/90"
+            : "border-border-color/40 bg-surface/70 dark:bg-surface/70"
         }`}
       >
-        <div className="relative flex items-center justify-between gap-3 px-4 py-3 md:px-5">
+        {/* Logo */}
+        <Link
+          href="#home"
+          className="font-display text-lg font-bold tracking-tight text-foreground transition-opacity hover:opacity-70 whitespace-nowrap"
+          onClick={closeMenu}
+        >
+          Vishal Singh
+        </Link>
+
+        {/* Desktop Nav Links (No Capsule) */}
+        <div className="hidden lg:flex items-center gap-6">
+          {navItems.map((item) => {
+            const isActive = activeSection === item.id;
+            return (
+              <Link
+                key={item.id}
+                href={item.href}
+                className={`text-sm font-medium transition-colors duration-200 relative ${
+                  isActive
+                    ? "text-foreground"
+                    : "text-foreground/60 hover:text-foreground"
+                }`}
+              >
+                {item.label}
+                {isActive && (
+                  <span className="absolute -bottom-1.5 left-1/2 h-[2px] w-4 -translate-x-1/2 rounded-full bg-foreground" />
+                )}
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Desktop Right Side */}
+        <div className="hidden md:flex items-center gap-3">
           <Link
-            href="#home"
-            className="group flex min-w-0 items-center"
-            onClick={closeMenu}
+            href="https://github.com/vishussingh24"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-foreground/60 transition hover:-translate-y-0.5 hover:text-foreground"
+            aria-label="GitHub"
           >
-            <span className="block font-display text-xl leading-none text-foreground transition-opacity group-hover:opacity-80">
-              Vishal Singh
-            </span>
+            <Github size={18} />
           </Link>
+          <Link
+            href="https://www.linkedin.com/in/vishussingh24/"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-foreground/60 transition hover:-translate-y-0.5 hover:text-foreground"
+            aria-label="LinkedIn"
+          >
+            <Linkedin size={18} />
+          </Link>
+          <div className="scale-90 opacity-80 hover:opacity-100 transition-opacity">
+            <ThemeToggle />
+          </div>
+          <Link
+            href="#contact"
+            className="rounded-full bg-foreground px-5 py-2 text-sm font-semibold text-background transition hover:-translate-y-0.5 hover:shadow-md ml-1"
+          >
+            Let&apos;s Talk
+          </Link>
+        </div>
 
-          <div className="hidden items-center justify-center lg:flex">
-            <div className="flex items-center gap-1 rounded-full border border-border-color/70 bg-white/50 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] dark:bg-surface/75">
-              {navItems.map((item) => {
-                const isActive = activeSection === item.id;
+        {/* Mobile Toggle */}
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-foreground transition"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+      </div>
 
-                return (
-                  <Link
-                    key={item.id}
-                    href={item.href}
-                    className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                      isActive
-                        ? "bg-foreground text-background shadow-sm"
-                        : "text-foreground/65 hover:bg-foreground/5 hover:text-foreground"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </div>
+      {/* Mobile Menu Dropdown */}
+      {isMenuOpen && (
+        <div className="absolute top-[80px] left-4 right-4 z-[99] rounded-[24px] border border-border-color/70 bg-surface/95 p-4 shadow-xl backdrop-blur-xl md:hidden">
+          <div className="grid gap-2">
+            {navItems.map((item) => {
+              const isActive = activeSection === item.id;
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  onClick={closeMenu}
+                  className={`rounded-xl px-4 py-3 text-sm font-medium transition ${
+                    isActive
+                      ? "bg-foreground/5 text-foreground"
+                      : "text-foreground/70 hover:bg-foreground/5 hover:text-foreground"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </div>
 
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="mt-4 flex items-center gap-3">
             <Link
               href="https://github.com/vishussingh24"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-color/70 bg-white/52 text-foreground/65 transition hover:-translate-y-0.5 hover:text-foreground dark:bg-surface/75"
-              aria-label="GitHub"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-border-color/50 px-4 py-3 text-sm font-medium text-foreground/75 transition hover:bg-foreground/5 hover:text-foreground"
+              onClick={closeMenu}
             >
-              <Github size={17} />
+              <Github size={16} />
+              GitHub
             </Link>
             <Link
               href="https://www.linkedin.com/in/vishussingh24/"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-color/70 bg-white/52 text-foreground/65 transition hover:-translate-y-0.5 hover:text-foreground dark:bg-surface/75"
-              aria-label="LinkedIn"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-border-color/50 px-4 py-3 text-sm font-medium text-foreground/75 transition hover:bg-foreground/5 hover:text-foreground"
+              onClick={closeMenu}
             >
-              <Linkedin size={17} />
-            </Link>
-            <ThemeToggle />
-            <Link
-              href="#contact"
-              className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:-translate-y-0.5"
-            >
-              <Sparkles size={15} />
-              Let&apos;s Talk
+              <Linkedin size={16} />
+              LinkedIn
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 md:hidden">
-            <ThemeToggle />
-            <button
-              type="button"
-              onClick={() => setIsMenuOpen((open) => !open)}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border-color/70 bg-white/55 text-foreground transition hover:border-foreground/30 dark:bg-surface/78"
-              aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-              aria-expanded={isMenuOpen}
-              aria-controls="mobile-navigation"
-            >
-              {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
-          </div>
-        </div>
-
-        {isMenuOpen ? (
-          <div
-            id="mobile-navigation"
-            className="relative border-t border-border-color/80 px-4 pb-4 md:hidden"
+          <Link
+            href="#contact"
+            onClick={closeMenu}
+            className="mt-4 flex w-full items-center justify-center rounded-xl bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:opacity-90"
           >
-            <div className="mt-4 rounded-[28px] border border-border-color/70 bg-[#fbf8f3]/90 p-3 shadow-[0_18px_40px_var(--shadow-color)] dark:bg-surface/92">
-              <div className="grid gap-2">
-                {navItems.map((item) => {
-                  const isActive = activeSection === item.id;
-
-                  return (
-                    <Link
-                      key={item.id}
-                      href={item.href}
-                      onClick={closeMenu}
-                      className={`rounded-2xl px-4 py-3 text-sm font-medium transition ${
-                        isActive
-                          ? "bg-foreground text-background"
-                          : "bg-background/60 text-foreground/70 hover:bg-background hover:text-foreground"
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </div>
-
-              <div className="mt-4 flex items-center gap-3">
-                <Link
-                  href="https://github.com/vishussingh24"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-border-color px-4 py-3 text-sm font-medium text-foreground/75 transition hover:text-foreground"
-                  onClick={closeMenu}
-                >
-                  <Github size={16} />
-                  GitHub
-                </Link>
-                <Link
-                  href="https://www.linkedin.com/in/vishussingh24/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-border-color px-4 py-3 text-sm font-medium text-foreground/75 transition hover:text-foreground"
-                  onClick={closeMenu}
-                >
-                  <Linkedin size={16} />
-                  LinkedIn
-                </Link>
-              </div>
-
-              <Link
-                href="#contact"
-                onClick={closeMenu}
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-3 text-sm font-semibold text-white transition hover:shadow-[0_14px_28px_var(--accent-glow)]"
-              >
-                <Sparkles size={16} />
-                Start a conversation
-              </Link>
-            </div>
-          </div>
-        ) : null}
-      </div>
+            Let&apos;s Talk
+          </Link>
+        </div>
+      )}
     </nav>
   );
 }

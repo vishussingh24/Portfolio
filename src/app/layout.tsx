@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Fraunces, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import SmoothScroll from "@/components/SmoothScroll";
+import Preloader from "@/components/Preloader";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -15,7 +17,8 @@ const fraunces = Fraunces({
 
 export const metadata: Metadata = {
   title: "Vishal Singh | Full Stack Developer",
-  description: "Portfolio of Vishal Singh, a Full Stack Developer & CS Student specialized in MERN Stack.",
+  description:
+    "Portfolio of Vishal Singh — Full Stack Developer & CS Student building modern web experiences with MERN, Next.js, and Three.js.",
 };
 
 export default function RootLayout({
@@ -24,12 +27,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${spaceGrotesk.variable} ${fraunces.variable} bg-background text-foreground antialiased transition-colors duration-300`}
+        className={`${spaceGrotesk.variable} ${fraunces.variable} bg-background text-foreground antialiased`}
+        suppressHydrationWarning
       >
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          {children}
+        <ThemeProvider attribute="class" defaultTheme="dark">
+          <Preloader />
+          <SmoothScroll>{children}</SmoothScroll>
         </ThemeProvider>
       </body>
     </html>
