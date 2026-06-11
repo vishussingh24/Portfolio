@@ -1,39 +1,72 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import { Github, Linkedin, Twitter } from "lucide-react";
 import Link from "next/link";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Footer() {
-  return (
-    <footer className="border-t border-border-color bg-background/70 py-8">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-foreground/60 md:flex-row">
-        <p>(c) {new Date().getFullYear()} Vishal Singh. Built with Next.js.</p>
+  const footerRef = useRef<HTMLElement>(null);
 
-        <div className="flex items-center gap-4">
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        footerRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 95%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+    }, footerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <footer
+      ref={footerRef}
+      className="border-t border-foreground/6 py-8"
+    >
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 text-sm text-foreground/30 md:flex-row">
+        <p>&copy; {new Date().getFullYear()} Vishal Singh. Built with Next.js &amp; Three.js.</p>
+
+        <div className="flex items-center gap-5">
           <Link
             href="https://github.com/vishussingh24"
             target="_blank"
             rel="noreferrer"
-            className="transition-colors hover:text-foreground"
+            className="transition-colors hover:text-foreground/60"
             aria-label="GitHub"
           >
-            <Github size={18} />
+            <Github size={16} />
           </Link>
           <Link
             href="https://www.linkedin.com/in/vishussingh24/"
             target="_blank"
             rel="noreferrer"
-            className="transition-colors hover:text-foreground"
+            className="transition-colors hover:text-foreground/60"
             aria-label="LinkedIn"
           >
-            <Linkedin size={18} />
+            <Linkedin size={16} />
           </Link>
           <Link
             href="https://x.com"
             target="_blank"
             rel="noreferrer"
-            className="transition-colors hover:text-foreground"
+            className="transition-colors hover:text-foreground/60"
             aria-label="Twitter"
           >
-            <Twitter size={18} />
+            <Twitter size={16} />
           </Link>
         </div>
       </div>
