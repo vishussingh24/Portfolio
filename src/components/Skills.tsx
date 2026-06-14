@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTheme } from "next-themes";
@@ -16,7 +17,6 @@ const SKILL_ICON_SLUGS: Record<string, string> = {
   SQL: "postgresql",
   GraphQL: "graphql",
   HTML5: "html5",
-  CSS3: "css3",
   React: "react",
   "React Native": "react",
   "Next.js": "nextdotjs",
@@ -30,7 +30,6 @@ const SKILL_ICON_SLUGS: Record<string, string> = {
   PostgreSQL: "postgresql",
   Redis: "redis",
   Firebase: "firebase",
-  AWS: "amazonaws",
   Vercel: "vercel",
   Docker: "docker",
   Linux: "linux",
@@ -78,14 +77,14 @@ export default function Skills() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (!mounted) return;
     
-    const ctx = gsap.context(() => {
-      // Heading animation
+    // Heading animation
       gsap.fromTo(
         ".skills-heading-container",
         { y: 50, opacity: 0 },
@@ -103,8 +102,8 @@ export default function Skills() {
       );
 
       // Rows animation
-      const rows = gsap.utils.toArray(".skill-row");
-      rows.forEach((row: any) => {
+      const rows = gsap.utils.toArray(".skill-row") as HTMLElement[];
+      rows.forEach((row) => {
         const line = row.querySelector(".row-line");
         const content = row.querySelector(".row-content");
         
@@ -128,10 +127,7 @@ export default function Skills() {
         );
       });
 
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [mounted]);
+  }, { scope: sectionRef, dependencies: [mounted] });
 
   const currentTheme = theme === "system" ? systemTheme : theme;
   const isDark = currentTheme !== "light";
@@ -161,7 +157,7 @@ export default function Skills() {
 
           {/* Right Side: Skills List */}
           <div className="lg:w-2/3 flex flex-col pt-8 lg:pt-0">
-            {skills.map((group, index) => (
+            {skills.map((group) => (
               <div key={group.category} className="skill-row relative flex flex-col group pb-14 pt-4">
                 {/* Animated Top Line */}
                 <div className="row-line absolute top-0 left-0 w-full h-px bg-foreground/10 group-hover:bg-accent/50 transition-colors duration-500" />
@@ -187,6 +183,7 @@ export default function Skills() {
                           className="flex items-center gap-2.5 rounded-full border border-foreground/10 bg-surface px-5 py-2.5 text-sm font-medium text-foreground/80 transition-all duration-300 hover:scale-105 hover:border-foreground/30 hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_4px_20px_rgba(255,255,255,0.05)] cursor-default"
                         >
                           {slug && mounted && (
+                            // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={`${ICON_BASE_URL}/${slug}/${iconColor}?viewbox=auto`}
                               alt=""
