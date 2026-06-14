@@ -19,42 +19,72 @@ export default function Navbar() {
   const [isVisible, setIsVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const lastScrollY = useRef(0);
+  const scrollTimeout = useRef<number | null>(null);
+  const sectionOffsets = useRef<{ id: string; offsetTop: number }[]>([]);
+
+  // Cache section offsets on mount and resize to avoid DOM queries on every scroll tick
+  useEffect(() => {
+    const updateOffsets = () => {
+      sectionOffsets.current = navItems.map((item) => {
+        const section = document.getElementById(item.id);
+        return {
+          id: item.id,
+          offsetTop: section ? section.offsetTop : 0,
+        };
+      });
+    };
+
+    // Delay initially to ensure the DOM is fully rendered before calculating offsets
+    const timeoutId = setTimeout(updateOffsets, 500);
+    window.addEventListener("resize", updateOffsets);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener("resize", updateOffsets);
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // Handle background styling based on scroll position
-      setIsScrolled(currentScrollY > 18);
+      if (scrollTimeout.current !== null) return;
 
-      // Scroll direction logic: 
-      if (currentScrollY < 100) {
-        // Keep it visible at the very top
-        setIsVisible(true);
-      } else if (currentScrollY > lastScrollY.current) {
-        // Scrolling down -> hide
-        setIsVisible(false);
-      } else if (currentScrollY < lastScrollY.current) {
-        // Scrolling up -> show
-        setIsVisible(true);
-      }
+      scrollTimeout.current = window.requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+        
+        // Handle background styling based on scroll position
+        const newIsScrolled = currentScrollY > 18;
+        setIsScrolled((prev) => (prev !== newIsScrolled ? newIsScrolled : prev));
 
-      // Track active section
-      let currentSection = "home";
-      const scrollPosition = currentScrollY + 160;
-      for (const item of navItems) {
-        const section = document.getElementById(item.id);
-        if (section && scrollPosition >= section.offsetTop) {
-          currentSection = item.id;
+        // Scroll direction logic: 
+        if (currentScrollY < 100) {
+          setIsVisible((prev) => (!prev ? true : prev));
+        } else if (currentScrollY > lastScrollY.current) {
+          setIsVisible((prev) => (prev ? false : prev));
+        } else if (currentScrollY < lastScrollY.current) {
+          setIsVisible((prev) => (!prev ? true : prev));
         }
-      }
-      setActiveSection(currentSection);
 
-      lastScrollY.current = currentScrollY;
+        // Track active section
+        let currentSection = "home";
+        const scrollPosition = currentScrollY + 160;
+        for (const item of sectionOffsets.current) {
+          if (scrollPosition >= item.offsetTop) {
+            currentSection = item.id;
+          }
+        }
+        
+        setActiveSection((prev) => (prev !== currentSection ? currentSection : prev));
+        lastScrollY.current = currentScrollY;
+        scrollTimeout.current = null;
+      });
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollTimeout.current !== null) {
+        window.cancelAnimationFrame(scrollTimeout.current);
+      }
+    };
   }, []);
 
   useEffect(() => {

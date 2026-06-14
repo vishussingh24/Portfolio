@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
 import { Github, Linkedin, Twitter } from "lucide-react";
 import Link from "next/link";
 import gsap from "gsap";
@@ -11,26 +12,22 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Footer() {
   const footerRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        footerRef.current,
-        { opacity: 0 },
-        {
-          opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: "top 95%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
-    }, footerRef);
-
-    return () => ctx.revert();
-  }, []);
+  useGSAP(() => {
+    gsap.fromTo(
+      footerRef.current,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: "top 95%",
+          toggleActions: "play none none reverse",
+        },
+      }
+    );
+  }, { scope: footerRef });
 
   return (
     <footer

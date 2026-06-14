@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -12,72 +13,66 @@ export default function Preloader() {
   const textRef = useRef<HTMLDivElement>(null);
   const [counter, setCounter] = useState(0);
 
-  useEffect(() => {
+  useGSAP(() => {
     // Note: We intentionally avoid setting body overflow hidden here
     // to preserve Lenis smooth scrolling height calculations.
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          setIsLoading(false);
-          // Safely wake up ScrollTrigger since the site is fully revealed
-          setTimeout(() => {
-            ScrollTrigger.refresh();
-          }, 100);
-        },
-      });
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setIsLoading(false);
+        // Safely wake up ScrollTrigger since the site is fully revealed
+        setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 100);
+      },
+    });
 
-      // 1. Animate counter from 0 to 100
-      const counterObj = { val: 0 };
-      tl.to(counterObj, {
-        val: 100,
-        duration: 2,
-        ease: "power2.inOut",
-        onUpdate: () => {
-          setCounter(Math.floor(counterObj.val));
-        },
-      });
+    // 1. Animate counter from 0 to 100
+    const counterObj = { val: 0 };
+    tl.to(counterObj, {
+      val: 100,
+      duration: 2,
+      ease: "power2.inOut",
+      onUpdate: () => {
+        setCounter(Math.floor(counterObj.val));
+      },
+    });
 
-      // 2. Character typing effect for the name
-      tl.fromTo(
-        ".char",
-        { y: 100, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.04,
-          ease: "power3.out",
-        },
-        0.3
-      );
+    // 2. Character typing effect for the name
+    tl.fromTo(
+      ".char",
+      { y: 100, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.04,
+        ease: "power3.out",
+      },
+      0.3
+    );
 
-      // 3. Slide out characters
-      tl.to(
-        ".char",
-        {
-          y: -100,
-          opacity: 0,
-          duration: 0.6,
-          stagger: 0.03,
-          ease: "power3.in",
-        },
-        "+=0.4"
-      );
+    // 3. Slide out characters
+    tl.to(
+      ".char",
+      {
+        y: -100,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.03,
+        ease: "power3.in",
+      },
+      "+=0.4"
+    );
 
-      // 4. Slide up the entire preloader screen
-      tl.to(containerRef.current, {
-        yPercent: -100,
-        duration: 0.9,
-        ease: "power4.inOut",
-      });
+    // 4. Slide up the entire preloader screen
+    tl.to(containerRef.current, {
+      yPercent: -100,
+      duration: 0.9,
+      ease: "power4.inOut",
+    });
 
-    }, containerRef);
-
-    return () => {
-      ctx.revert();
-    };
-  }, []);
+  }, { scope: containerRef });
 
   if (!isLoading) return null;
 

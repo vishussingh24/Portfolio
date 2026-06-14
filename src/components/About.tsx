@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
 import { GraduationCap, Briefcase } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -12,9 +13,8 @@ export default function About() {
   const paragraphRef = useRef<HTMLParagraphElement>(null);
   const timelineLineRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Word-by-word reveal for the main paragraph
+  useGSAP(() => {
+    // Word-by-word reveal for the main paragraph
       const words = paragraphRef.current?.querySelectorAll(".about-word");
       if (words) {
         gsap.fromTo(
@@ -23,12 +23,12 @@ export default function About() {
           {
             opacity: 1,
             duration: 0.5,
-            stagger: 0.04,
+            stagger: { amount: 1 },
             ease: "none",
             scrollTrigger: {
               trigger: paragraphRef.current,
               start: "top 80%",
-              end: "bottom 40%",
+              end: "bottom 50%",
               scrub: 1,
             },
           }
@@ -90,7 +90,8 @@ export default function About() {
       }
 
       // Timeline Cards Reveal
-      gsap.utils.toArray(".timeline-item").forEach((item: any, i) => {
+      const timelineItems = gsap.utils.toArray(".timeline-item") as HTMLElement[];
+      timelineItems.forEach((item) => {
         gsap.fromTo(
           item,
           { opacity: 0, x: -40 },
@@ -107,13 +108,10 @@ export default function About() {
           }
         );
       });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  }, { scope: sectionRef });
 
   const aboutText =
-    "I'm a Computer Science student and full-stack developer focused on building modern web applications with clean interfaces, predictable APIs, and maintainable code. I mainly work with the MERN stack and also enjoy building interactive 3D experiences with Three.js.";
+    "I'm a Computer Science student and full-stack developer focused on building modern web applications, clean interfaces, and intelligent systems. Beyond my core work with the MERN stack, I'm passionate about exploring AI technologies—from building autonomous agents and AI automation to implementing RAG pipelines for smarter applications. I also enjoy bringing ideas to life through interactive 3D experiences with Three.js.";
 
   const aboutWords = aboutText.split(" ");
 
@@ -131,7 +129,7 @@ export default function About() {
         {/* Word-by-word paragraph */}
         <p
           ref={paragraphRef}
-          className="max-w-4xl font-display text-3xl leading-snug text-foreground md:text-4xl lg:text-5xl"
+          className="max-w-4xl font-display text-2xl leading-relaxed text-foreground md:text-3xl lg:text-4xl"
         >
           {aboutWords.map((word, i) => (
             <span key={i} className="about-word inline-block mr-[0.28em]">
@@ -142,7 +140,7 @@ export default function About() {
 
         {/* Chips */}
         <div className="about-chips mt-10 flex flex-wrap gap-3">
-          {["Full Stack Development", "System Thinking", "Clean UI", "3D / Three.js"].map(
+          {["Full Stack Development", "AI & Agents", "System Thinking", "Clean UI", "3D / Three.js"].map(
             (chip) => (
               <span
                 key={chip}
@@ -163,7 +161,7 @@ export default function About() {
           
           <div className="relative pl-8 md:pl-0">
             {/* The animated line */}
-            <div className="absolute left-[15px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-px bg-foreground/10">
+            <div className="absolute left-[15.5px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-px bg-foreground/10">
               <div ref={timelineLineRef} className="w-full bg-gradient-to-b from-accent to-accent-2 origin-top" />
             </div>
 
@@ -173,7 +171,7 @@ export default function About() {
                 <div className="hidden md:block w-5/12 text-right pr-8">
                   <span className="text-sm font-medium text-accent">2023 - Present</span>
                 </div>
-                <div className="absolute left-[-29px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full bg-background border-2 border-accent z-10 shadow-[0_0_15px_rgba(0,229,255,0.5)]" />
+                <div className="absolute left-[-24px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full bg-background border-2 border-accent z-10 shadow-[0_0_15px_rgba(0,229,255,0.5)]" />
                 <div className="w-full md:w-5/12 md:pl-8">
                   <div className="surface-card p-6 rounded-2xl transition-transform hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
                     <h4 className="text-lg font-bold text-foreground">B.Tech in Computer Science</h4>
@@ -193,7 +191,7 @@ export default function About() {
                 <div className="hidden md:block w-5/12 text-left pl-8">
                   <span className="text-sm font-medium text-accent-2">2021 - 2023</span>
                 </div>
-                <div className="absolute left-[-29px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full bg-background border-2 border-accent-2 z-10 shadow-[0_0_15px_rgba(184,41,255,0.5)]" />
+                <div className="absolute left-[-24px] md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full bg-background border-2 border-accent-2 z-10 shadow-[0_0_15px_rgba(184,41,255,0.5)]" />
                 <div className="w-full md:w-5/12 md:pr-8">
                   <div className="surface-card p-6 rounded-2xl transition-transform hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.8)] text-left md:text-right">
                     <h4 className="text-lg font-bold text-foreground">High School</h4>

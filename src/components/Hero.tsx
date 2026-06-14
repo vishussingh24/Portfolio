@@ -1,79 +1,78 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowDown, Sparkles } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const orbRef = useRef<HTMLDivElement>(null);
+
+  const mouseTimeout = useRef<number | null>(null);
 
   // Mouse move effect for parallax text and spotlight
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    const { clientX, clientY } = e;
-    const x = (clientX / window.innerWidth - 0.5) * 20; // -10 to 10
-    const y = (clientY / window.innerHeight - 0.5) * 20; // -10 to 10
-    
-    gsap.to(".parallax-text", {
-      rotationY: x,
-      rotationX: -y,
-      transformPerspective: 1000,
-      duration: 1.5,
-      ease: "power2.out"
-    });
+    if (mouseTimeout.current !== null) return;
 
-    // Update spotlight position via CSS variables
-    if (sectionRef.current) {
-      const rect = sectionRef.current.getBoundingClientRect();
-      const relativeX = clientX - rect.left;
-      const relativeY = clientY - rect.top;
-      sectionRef.current.style.setProperty("--mouse-x", `${relativeX}px`);
-      sectionRef.current.style.setProperty("--mouse-y", `${relativeY}px`);
-    }
+    const { clientX, clientY } = e;
+
+    mouseTimeout.current = window.requestAnimationFrame(() => {
+      const x = (clientX / window.innerWidth - 0.5) * 20; // -10 to 10
+      const y = (clientY / window.innerHeight - 0.5) * 20; // -10 to 10
+      
+      gsap.to(".parallax-text", {
+        rotationY: x,
+        rotationX: -y,
+        transformPerspective: 1000,
+        duration: 1.5,
+        ease: "power2.out"
+      });
+
+      // Update spotlight position via CSS variables
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        const relativeX = clientX - rect.left;
+        const relativeY = clientY - rect.top;
+        sectionRef.current.style.setProperty("--mouse-x", `${relativeX}px`);
+        sectionRef.current.style.setProperty("--mouse-y", `${relativeY}px`);
+      }
+      mouseTimeout.current = null;
+    });
   };
 
-  const animateHero = useCallback(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: 0.3 });
+  useGSAP(() => {
+    const tl = gsap.timeline({ delay: 0.3 });
 
-      // Reveal text lines
-      tl.fromTo(
-        ".hero-text-line",
-        { y: 150, opacity: 0, rotateZ: 5 },
-        { y: 0, opacity: 1, rotateZ: 0, duration: 1.2, stagger: 0.15, ease: "power4.out" }
-      );
+    // Reveal text lines
+    tl.fromTo(
+      ".hero-text-line",
+      { y: 150, opacity: 0, rotateZ: 5 },
+      { y: 0, opacity: 1, rotateZ: 0, duration: 1.2, stagger: 0.15, ease: "power4.out" }
+    );
 
-      // Reveal other elements
-      tl.fromTo(
-        ".hero-fade",
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out" },
-        "-=0.8"
-      );
+    // Reveal other elements
+    tl.fromTo(
+      ".hero-fade",
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out" },
+      "-=0.8"
+    );
 
-      // Parallax out
-      gsap.to(".hero-content", {
-        yPercent: 40,
-        opacity: 0,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        }
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  useEffect(() => {
-    const cleanup = animateHero();
-    return cleanup;
-  }, [animateHero]);
+    // Parallax out
+    gsap.to(".hero-content", {
+      yPercent: 40,
+      opacity: 0,
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+      }
+    });
+  }, { scope: sectionRef });
 
   return (
     <section

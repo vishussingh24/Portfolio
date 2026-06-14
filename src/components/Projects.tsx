@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { ExternalLink, Github, ArrowUpRight } from "lucide-react";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import { Github, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -28,7 +29,8 @@ const projects = [
     tags: ["React", "Node.js", "MongoDB", "AI Integration"],
     accentColor: "text-orange-600 dark:text-orange-400",
     imageBg: "bg-orange-50 dark:bg-orange-900/10",
-    github: "https://github.com/vishussingh24",
+    image: "/assets/kisanai.png",
+    github: "https://github.com/vishussingh24/kisan.ai",
     demo: "https://kisanai.vercel.app",
   },
   {
@@ -58,17 +60,9 @@ const projects = [
 export default function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-
-    const ctx = gsap.context(() => {
-      // Heading animation
+  useGSAP(() => {
+    // Heading animation
       gsap.fromTo(
         ".projects-heading",
         { y: 50, opacity: 0 },
@@ -86,30 +80,26 @@ export default function Projects() {
       );
 
       // Stacking Cards Scale & Opacity Animation
-      const cards = gsap.utils.toArray(".project-card");
+      const cards = gsap.utils.toArray(".project-card") as HTMLElement[];
       
-      cards.forEach((card: any, index) => {
+      cards.forEach((card, index) => {
         if (index === cards.length - 1) return;
 
         gsap.to(card, {
           scale: 0.95,
           opacity: 0.4,
-          filter: "blur(4px)",
           ease: "none",
           scrollTrigger: {
             trigger: card,
             start: "top 10%", 
-            endTrigger: cards[index + 1] as HTMLElement,
+            endTrigger: cards[index + 1],
             end: "top 10%", 
             scrub: true,
           },
         });
       });
 
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [mounted]);
+  }, { scope: sectionRef });
 
   return (
     <section id="projects" ref={sectionRef} className="scroll-mt-24 py-28 lg:py-40 relative z-10">
@@ -124,7 +114,7 @@ export default function Projects() {
             Featured Projects
           </h2>
           <p className="mt-6 max-w-2xl text-foreground/60 text-lg leading-relaxed">
-            A curated selection of applications I've architected, designed, and built from the ground up.
+            A curated selection of applications I&apos;ve architected, designed, and built from the ground up.
           </p>
         </div>
 
@@ -198,7 +188,7 @@ export default function Projects() {
                     <div className={`relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl ${project.imageBg} border border-border-color/20`}>
                       
                       {/* Decorative Product Placeholder */}
-                      <div className="absolute -right-4 -bottom-8 lg:-right-8 lg:-bottom-12 w-[110%] h-[120%] rounded-tl-2xl bg-white dark:bg-[#222] border-t border-l border-border-color/30 shadow-2xl flex flex-col overflow-hidden opacity-100 grayscale-0 blur-0 lg:opacity-40 lg:grayscale lg:blur-[2px] transition-all duration-700 ease-out group-hover:opacity-100 group-hover:grayscale-0 group-hover:blur-0 group-hover:-translate-y-4">
+                      <div className="absolute -right-4 -bottom-8 lg:-right-8 lg:-bottom-12 w-[110%] h-[120%] rounded-tl-2xl bg-white dark:bg-[#222] border-t border-l border-border-color/30 shadow-2xl flex flex-col overflow-hidden opacity-100 transition-all duration-700 ease-out group-hover:-translate-y-4">
                         {/* Browser Bar */}
                         <div className="h-10 w-full bg-background/50 flex items-center px-6 gap-2 border-b border-border-color/20">
                           <div className="w-3 h-3 rounded-full bg-neutral-300 dark:bg-neutral-600" />
@@ -206,15 +196,22 @@ export default function Projects() {
                           <div className="w-3 h-3 rounded-full bg-neutral-300 dark:bg-neutral-600" />
                         </div>
                         {/* Mockup Content */}
-                        <div className="flex-1 w-full p-8 flex flex-col items-center justify-center relative bg-grid-pattern overflow-hidden">
-                          <span className="font-display text-8xl font-black text-foreground/5 absolute scale-150 whitespace-nowrap">
-                            {project.title}
-                          </span>
-                          <div className="w-32 h-32 rounded-3xl bg-background border border-border-color/30 flex items-center justify-center shadow-xl z-10 transition-transform duration-700 ease-out group-hover:scale-110">
-                            <span className={`font-display text-6xl font-bold ${project.accentColor}`}>
-                              {project.title.charAt(0)}
-                            </span>
-                          </div>
+                        <div className="flex-1 w-full flex flex-col items-center justify-center relative bg-grid-pattern overflow-hidden">
+                          {project.image ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={project.image} alt={project.title} className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105" />
+                          ) : (
+                            <>
+                              <span className="font-display text-8xl font-black text-foreground/5 absolute scale-150 whitespace-nowrap pointer-events-none">
+                                {project.title}
+                              </span>
+                              <div className="w-32 h-32 rounded-3xl bg-background border border-border-color/30 flex items-center justify-center shadow-xl z-10 transition-transform duration-700 ease-out group-hover:scale-110">
+                                <span className={`font-display text-6xl font-bold ${project.accentColor}`}>
+                                  {project.title.charAt(0)}
+                                </span>
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
 
